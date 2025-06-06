@@ -3,16 +3,17 @@ import asyncHandler from "../utils/asyncHandler.js";
 import { User } from "../models/user.models.js";
 
 const registerUser = asyncHandler(async (req, res) => {
-  const { name, username, email, phone, password, dateOfBirth } = req.body;
+  const { name, email, phone, password, dateOfBirth } = req.body;
 
-  if (!name || !username || !email || !phone || !password || !dateOfBirth) {
+  if (!name || !email || !phone || !password || !dateOfBirth) {
+    console.log(req.body);
     return res
       .status(400)
       .json(new ApiResponse(400, null, "All fields are required"));
   }
 
   const userExisted = await User.findOne({
-    $or: [{ username }, { email }],
+    $or: [{ name }, { email }],
   });
 
   if (userExisted) {
@@ -22,7 +23,6 @@ const registerUser = asyncHandler(async (req, res) => {
   }
   const user = await User.create({
     name,
-    username,
     email,
     phone,
     password,
