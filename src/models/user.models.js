@@ -31,6 +31,10 @@ const userSchema = new Schema(
       type: Date,
       required: true,
     },
+    gullak: {
+      type: Schema.Types.ObjectId,
+      ref: "Gullak",
+    },
     transactions: [
       {
         type: Schema.Types.ObjectId,
@@ -40,15 +44,23 @@ const userSchema = new Schema(
     refreshToken: {
       type: String,
     },
+
+    otp: {
+      type: String,
+    },
+    otpExpiry: {
+      type: Date,
+      default: Date.now,
+    },
   },
   { timestamps: true }
 );
 
-userSchema.pre("save",async function (next){
-    if(!this.isModified("password")) next();
-    this.password = await bcrypt.hash(this.password, 10);
-    next();
-})
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) next();
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
 userSchema.methods.isPasswordMatch = async function (password) {
   // this.password is the password from the database
   // password is the password from the user input
